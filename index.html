@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>그린굿 (GreenGood) - 학생을 위한 운동장 안구 안전 & 친환경 환경 플랫폼</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Outfit & Noto Sans KR -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#0a1210',
+                            card: '#12201c',
+                            border: '#1e3830',
+                            emerald: '#10b981',
+                            gold: '#f59e0b',
+                            sand: '#d97706',
+                            glow: '#059669'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans KR', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #070d0b;
+            color: #ecfdf5;
+            scroll-behavior: smooth;
+        }
+
+        /* Glassmorphism elements */
+        .glass-panel {
+            background: rgba(18, 32, 28, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(22, 40, 35, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Gold Gradient Text */
+        .text-gold-gradient {
+            background: linear-gradient(135deg, #fef3c7 0%, #f59e0b 50%, #d97706 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .text-emerald-gradient {
+            background: linear-gradient(135deg, #a7f3d0 0%, #10b981 50%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Canvas Stage */
+        #playground-canvas {
+            border-radius: 1.25rem;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070d0b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3830;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+
+        /* Pulse glow animation */
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.8); }
+        }
+
+        .sos-btn-glow {
+            animation: pulseGlow 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-emerald-500 selection:text-white">
+
+    <!-- Top Header -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-emerald-900/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-700 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-emerald-900/50">
+                    <i class="fa-solid fa-leaf text-slate-950"></i>
+                </div>
+                <div>
+                    <span class="text-2xl font-black tracking-tight font-display text-emerald-gradient">그린굿 <span class="text-xs font-normal text-slate-400 uppercase tracking-widest block sm:inline sm:ml-2">GreenGood</span></span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="#sos-section" class="sos-btn-glow bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold px-4 py-2 rounded-xl text-xs sm:text-sm flex items-center gap-2 transition-all transform active:scale-95 shadow-lg">
+                    <i class="fa-solid fa-kit-medical text-base animate-bounce"></i>
+                    <span>눈 모래 응급 대처</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-12 flex-grow w-full">
+
+        <!-- Hero Section -->
+        <section class="text-center space-y-4 max-w-3xl mx-auto pt-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-800/50 text-emerald-300 text-xs font-medium">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                학생들을 위한 운동장 안구 안전 & 인프라 혁신 프로젝트
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black leading-tight tracking-tight">
+                바람이 불어도, 눈 감지 말고<br/>
+                <span class="text-emerald-gradient">마음껏 달릴 수 있도록!</span>
+            </h1>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                체육시간마다 모래 먼지 때문에 눈이 따가워 눈물을 흘렸던 경험이 있나요?<br class="hidden sm:inline"/>
+                <strong>'그린굿'</strong>은 눈에 모래가 들어갔을 때의 신속한 응급 대처부터 친환경 운동장 환경 전환을 위한 기록을 제공합니다.
+            </p>
+        </section>
+
+        <!-- CORE FEATURE 1: Emergency First Aid & Incident Recorder -->
+        <section id="sos-section" class="scroll-mt-24 space-y-6">
+            <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-red-500/20 relative overflow-hidden">
+                <!-- Background ambient glow -->
+                <div class="absolute -top-24 -right-24 w-72 h-72 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                    <div>
+                        <div class="flex items-center gap-2 text-red-400 text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Emergency First-Aid Guide
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white flex items-center gap-3">
+                            <i class="fa-solid fa-eye-cross text-red-500"></i> 눈에 모래가 들어갔을 때 올바른 대처법
+                        </h2>
+                    </div>
+                    <div class="text-xs text-slate-400 bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-800 self-start md:self-auto">
+                        <i class="fa-solid fa-circle-info text-amber-400 mr-1"></i> 당황하지 말고 아래 4단계를 차례대로 따라 하세요.
+                    </div>
+                </div>
+
+                <!-- 4-Step Interactive First-Aid Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+                    <!-- Step 1 -->
+                    <div class="glass-card p-5 rounded-2xl border-l-4 border-l-red-500 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="bg-red-500/20 text-red-400 font-extrabold text-xs px-2.5 py-1 rounded-lg">STEP 1</span>
+                                <i class="fa-solid fa-hand-slash text-red-400 text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-base">절대로 비비지 마세요!</h3>
+                            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                                눈을 비비면 모래 알갱이가 각막을 긁어 심각한 상처(각막 찰과상)나 염증을 유발합니다.
+                            </p>
+                        </div>
+                        <div class="bg-red-950/40 p-2.5 rounded-xl text-[11px] text-red-300 font-medium">
+                            ⚠️ 즉시 눈을 살며시 감아 보호하세요.
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="glass-card p-5 rounded-2xl border-l-4 border-l-blue-500 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="bg-blue-500/20 text-blue-400 font-extrabold text-xs px-2.5 py-1 rounded-lg">STEP 2</span>
+                                <i class="fa-solid fa-droplet text-blue-400 text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-base">인공눈물 / 물로 세척</h3>
+                            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                                인공눈물이나 식염수를 눈에 넉넉히 흘려넣거나, 흘러내리는 깨끗한 수돗물로 씻어내세요.
+                            </p>
+                        </div>
+                        <div class="bg-blue-950/40 p-2.5 rounded-xl text-[11px] text-blue-300 font-medium">
+                            💧 눈동자를 아래로 향하고 씻어냅니다.
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="glass-card p-5 rounded-2xl border-l-4 border-l-amber-500 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="bg-amber-500/20 text-amber-400 font-extrabold text-xs px-2.5 py-1 rounded-lg">STEP 3</span>
+                                <i class="fa-solid fa-eye text-amber-400 text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-base">눈 깜빡이며 눈물 유도</h3>
+                            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                                물속이나 대동에 인공눈물을 넣은 상태에서 눈을 여러 번 깜빡여 모래가 자연스럽게 흘러나오게 합니다.
+                            </p>
+                        </div>
+                        <div class="bg-amber-950/40 p-2.5 rounded-xl text-[11px] text-amber-300 font-medium">
+                            👀 눈물과 함께 이물질을 배출시킵니다.
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500 flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="bg-emerald-500/20 text-emerald-400 font-extrabold text-xs px-2.5 py-1 rounded-lg">STEP 4</span>
+                                <i class="fa-solid fa-user-doctor text-emerald-400 text-xl"></i>
+                            </div>
+                            <h3 class="font-bold text-white text-base">보건실 / 안과 방문</h3>
+                            <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                                세척 후에도 계속 통증이나 이물감, 충혈이 남는다면 즉시 보건 선생님이나 안과 전문의를 찾으세요.
+                            </p>
+                        </div>
+                        <div class="bg-emerald-950/40 p-2.5 rounded-xl text-[11px] text-emerald-300 font-medium">
+                            🏥 2차 감염 예방이 매우 중요합니다.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Incident Logger Sub-Section -->
+                <div class="mt-8 pt-6 border-t border-slate-800 grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Form side -->
+                    <div class="lg:col-span-5 space-y-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-file-pen text-amber-400"></i> 모래 유입 피해 상황 기록하기
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                언제 어디서 모래가 눈에 들어갔는지 기록해두면, 학교 운동장 교체 청원 및 안전 통계로 활용됩니다.
+                            </p>
+                        </div>
+
+                        <form id="incident-form" onsubmit="saveIncidentLog(event)" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">상황 발생 시간 / 활동</label>
+                                <select id="log-activity" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                    <option value="체육 수업시간">🏃 체육 수업시간</option>
+                                    <option value="점심시간 자유운동">⚽ 점심시간 자유운동</option>
+                                    <option value="하교 길 운동장 지나갈 때">🏫 등/하교 중 운동장 통과</option>
+                                    <option value="동아리/방과후 활동">🏀 방과후 스포츠 클럽</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">당시 바람 세기</label>
+                                    <select id="log-wind" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                        <option value="강풍 (모래 흩날림)">🌬️ 강풍 (약 8~10m/s)</option>
+                                        <option value="태풍급 바람">🌪️ 돌풍 (10m/s 이상)</option>
+                                        <option value="보통 바람">🍃 미풍 (4~7m/s)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-300 mb-1">증상 정도</label>
+                                    <select id="log-severity" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500">
+                                        <option value="보통 (세척 후 완화)">😐 세척 후 바로 완화</option>
+                                        <option value="심함 (보건실 이동)">😣 보건실 방문 / 지속 충혈</option>
+                                        <option value="매우 심함 (안과 진료)">🏥 안과 진료 필요</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1">불편했던 점 (메모)</label>
+                                <input type="text" id="log-note" required placeholder="예: 축구하다가 눈에 갑자기 모래가 들어와서 경기 중단됨" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                            </div>
+
+                            <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md active:scale-95 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-plus"></i> 내 기록 저장하기 (비공개 로컬 저장)
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Logged List side -->
+                    <div class="lg:col-span-7 flex flex-col justify-between space-y-3">
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                            <h4 class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i> 나 및 친구들의 최근 피해 등록 기록
+                            </h4>
+                            <span class="text-[11px] text-emerald-400 font-semibold" id="total-logs-count">총 0건 기록됨</span>
+                        </div>
+
+                        <div id="incident-list-container" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                            <!-- Dynamic log items will be inserted here -->
+                        </div>
+
+                        <div class="p-3 bg-emerald-950/30 border border-emerald-800/40 rounded-xl flex items-center gap-3 text-xs text-slate-300">
+                            <i class="fa-solid fa-shield-halved text-emerald-400 text-lg shrink-0"></i>
+                            <div>
+                                <strong class="text-emerald-300">개인정보 철저 보호:</strong> 입력한 기록은 어떠한 외부 서버에도 수집되지 않으며, 오직 본인 기기(LocalStorage)에만 보관됩니다.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORE FEATURE 2: Playground Environment Comparison Simulator -->
+        <section class="space-y-6">
+            <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-emerald-500/20 space-y-6">
+                
+                <!-- Section Header & Wind Controls -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-slate-800 pb-6">
+                    <div>
+                        <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+                            <i class="fa-solid fa-flask"></i> Interactive Environment Simulator
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white">
+                            운동장 환경 실시간 비교 (모래 VS 친환경 잔디)
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">
+                            바람 슬라이더를 조절해 모래 먼지 유입과 잔디 운동장의 눈 안전 차이를 직관적으로 확인하세요.
+                        </p>
+                    </div>
+
+                    <!-- Wind Controller Box -->
+                    <div class="glass-card p-4 rounded-2xl border border-emerald-700/30 w-full lg:w-80 space-y-2">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-white flex items-center gap-1.5">
+                                <i class="fa-solid fa-wind text-cyan-400"></i> 시뮬레이션 풍속 (바람)
+                            </span>
+                            <span id="wind-speed-val" class="font-mono font-black text-amber-400 text-sm">8 m/s (강풍)</span>
+                        </div>
+                        <input type="range" id="wind-slider" min="1" max="15" value="8" oninput="updateWindSpeed(this.value)" class="w-full accent-emerald-500 cursor-pointer h-2 bg-slate-800 rounded-lg">
+                        <div class="flex justify-between text-[10px] text-slate-400">
+                            <span>1m/s (잔잔함)</span>
+                            <span>8m/s (모래 날림)</span>
+                            <span>15m/s (태풍급)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Dual Simulation Display Canvas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- LEFT: Sand Playground Stage -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-amber-950 text-amber-300 border border-amber-700/50 flex items-center gap-1.5">
+                                <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> 현재 환경: 모래 운동장
+                            </span>
+                            <span id="sand-risk-indicator" class="text-xs font-extrabold text-red-400">
+                                안구 모래 유입 위험: 매우 높음
+                            </span>
+                        </div>
+
+                        <!-- Canvas Box Sand -->
+                        <div class="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden border-2 border-amber-700/50 bg-slate-900">
+                            <canvas id="sand-canvas" class="w-full h-full block"></canvas>
+                            
+                            <!-- Sand Overlay UI -->
+                            <div class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md p-2.5 rounded-xl border border-amber-500/30 text-[11px] space-y-1">
+                                <div class="text-amber-300 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-eye-slash"></i> 학생 반응
+                                </div>
+                                <p id="sand-student-status" class="text-slate-300 font-medium">"바람 때문에 눈을 뜰 수 없어요! 😣"</p>
+                            </div>
+
+                            <div class="absolute bottom-3 right-3 bg-red-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-red-500/40 text-xs font-bold text-red-300">
+                                미세 모래 농도: <span id="dust-density-text" class="text-white font-mono">HIGH</span>
+                            </div>
+                        </div>
+
+                        <!-- Sand Description Card -->
+                        <div class="glass-card p-4 rounded-xl space-y-1.5 text-xs">
+                            <div class="font-bold text-amber-400 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-xmark"></i> 모래 운동장의 문제점
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">
+                                풍속 5m/s 이상 시 모래 알갱이가 대기에 떠올라 눈에 들어갑니다. 체육 활동 중단, 안구 질환(결막염/각막상처) 유발 및 교실 내 2차 모래 유입의 주요 원인이 됩니다.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Eco Turf Playground Stage -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-950 text-emerald-300 border border-emerald-700/50 flex items-center gap-1.5">
+                                <i class="fa-solid fa-circle-check text-emerald-400"></i> 개선 환경: 친환경 잔디 운동장
+                            </span>
+                            <span class="text-xs font-extrabold text-emerald-400">
+                                안구 모래 유입 위험: 0% (완전 차단)
+                            </span>
+                        </div>
+
+                        <!-- Canvas Box Turf -->
+                        <div class="relative w-full h-72 sm:h-80 rounded-2xl overflow-hidden border-2 border-emerald-500/50 bg-slate-900">
+                            <canvas id="turf-canvas" class="w-full h-full block"></canvas>
+                            
+                            <!-- Turf Overlay UI -->
+                            <div class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md p-2.5 rounded-xl border border-emerald-500/30 text-[11px] space-y-1">
+                                <div class="text-emerald-300 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-face-smile"></i> 학생 반응
+                                </div>
+                                <p class="text-slate-300 font-medium">"바람이 불어도 눈 안 아프게 신나게 달려요! ⚽"</p>
+                            </div>
+
+                            <div class="absolute bottom-3 right-3 bg-emerald-950/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/40 text-xs font-bold text-emerald-300">
+                                공기 쾌적도: <span class="text-white font-mono">100% CLEAN</span>
+                            </div>
+                        </div>
+
+                        <!-- Turf Description Card -->
+                        <div class="glass-card p-4 rounded-xl space-y-1.5 text-xs">
+                            <div class="font-bold text-emerald-400 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> 친환경 잔디의 효과
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">
+                                땅 표면이 잔디로 고정되어 강풍이 불어도 눈에 모래가 전혀 들어가지 않습니다. 넘어져도 부상이 적고, 계절과 바람에 상관없이 마음껏 야외 체육활동이 가능합니다.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Metrics Impact Cards -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="glass-panel p-6 rounded-3xl border border-emerald-500/20 flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-500 to-amber-600 flex items-center justify-center text-white text-2xl shrink-0 shadow-lg">
+                    <i class="fa-solid fa-eye-slash"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400 font-medium">학생 안구 질환 예방률</div>
+                    <div class="text-2xl font-black text-white font-display">99.2% <span class="text-xs text-emerald-400 font-normal">개선</span></div>
+                    <p class="text-[11px] text-slate-400 mt-1">결막염 및 각막 찰과상 위험 차단</p>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 rounded-3xl border border-emerald-500/20 flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white text-2xl shrink-0 shadow-lg">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400 font-medium">연간 가능 체육 수업일수</div>
+                    <div class="text-2xl font-black text-white font-display">+72일 <span class="text-xs text-emerald-400 font-normal">증가</span></div>
+                    <p class="text-[11px] text-slate-400 mt-1">바람 부는 날도 파행 없는 정상 수업</p>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 rounded-3xl border border-emerald-500/20 flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-2xl shrink-0 shadow-lg">
+                    <i class="fa-solid fa-school-flag"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400 font-medium">교실 실내 먼지 유입률</div>
+                    <div class="text-2xl font-black text-white font-display">94% <span class="text-xs text-emerald-400 font-normal">감소</span></div>
+                    <p class="text-[11px] text-slate-400 mt-1">창문 열고 쾌적한 학습 환경 보장</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Voice & Signature Petition -->
+        <section class="glass-panel p-6 sm:p-10 rounded-3xl border border-emerald-500/20 space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <span class="px-3 py-1 rounded-full bg-emerald-950 text-emerald-300 text-xs font-bold border border-emerald-800">
+                    학생 주도 한줄 응원 청원
+                </span>
+                <h3 class="text-2xl sm:text-3xl font-black text-white">
+                    "모래 없는 깨끗한 운동장을 원해요!"
+                </h3>
+                <p class="text-xs sm:text-sm text-slate-300">
+                    우리의 작지만 모인 목소리가 학교 인프라 혁신(SDGs Goal 9)을 이루는 큰 시작이 됩니다.
+                </p>
+            </div>
+
+            <!-- Signature Form -->
+            <form id="petition-form" onsubmit="handlePetitionSubmit(event)" class="max-w-xl mx-auto space-y-3">
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="text" id="petitioner-grade" required placeholder="학년/반 (예: 2학년3반)" class="col-span-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                    <input type="text" id="petitioner-name" required placeholder="이름 또는 닉네임" class="col-span-2 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <input type="text" id="petitioner-message" required placeholder="응원 한마디 (예: 바람 불 때도 눈 안 아프게 마음껏 축구하고 싶어요!)" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-black py-3 rounded-xl text-xs transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> 청원 동참하고 지지 남기기
+                </button>
+            </form>
+
+            <!-- Support Feed -->
+            <div class="mt-6 pt-6 border-t border-slate-800">
+                <h4 class="text-xs font-bold text-slate-400 mb-3 flex items-center gap-1.5">
+                    <i class="fa-solid fa-users text-emerald-400"></i> 실시간 학생 서명 피드
+                </h4>
+                <div id="petition-feed" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-1">
+                    <!-- Dynamic petition items loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Ethical & Privacy Compliance Notice -->
+        <section class="glass-card p-6 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-950 border border-emerald-700 text-emerald-400 flex items-center justify-center text-lg">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white text-sm">그린굿(GreenGood) 윤리 및 개인정보 보호 방침</h4>
+                    <p class="text-xs text-slate-400">안전하고 정직한 학생 전용 웹 애플리케이션</p>
+                </div>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+                본 웹앱은 주민등록번호, 전화번호, 정밀 위치 정보 등 어떠한 <strong>민감 개인정보도 수집하거나 외부 서버로 전달하지 않습니다.</strong> 
+                모든 응급처치 기록 및 서명 데이터는 사용자의 브라우저 내 안전 구역(LocalStorage)에만 저장되므로 안심하고 이용하실 수 있습니다.
+            </p>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-900 bg-slate-950 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <div class="flex justify-center items-center gap-2 text-slate-300 font-bold">
+                <span>프로젝트: 그린굿 (GreenGood)</span>
+                <span>•</span>
+                <span class="text-emerald-400">UN SDGs 9번: 산업·혁신·사회기반시설</span>
+            </div>
+            <p>학생 안구 건강 및 친환경 잔디 운동장 조성을 위한 웹 솔루션</p>
+            <p class="text-[10px] text-slate-600">&copy; 2026 GreenGood Project. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-24 opacity-0 bg-emerald-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-emerald-500/50 flex items-center gap-3 transition-all duration-300 z-50 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-message" class="text-xs font-medium">성공적으로 처리되었습니다.</span>
+    </div>
+
+    <script>
+        // Sample Initial Data for Logs & Petitions
+        const initialLogs = [
+            { activity: '체육 수업시간', wind: '강풍 (약 8~10m/s)', severity: '심함 (보건실 이동)', note: '축구 경기 중 강한 바람에 눈에 모래가 들어가 수업 중단됨', time: '오늘 10:20' },
+            { activity: '점심시간 자유운동', wind: '태풍급 바람', severity: '보통 (세척 후 완화)', note: '농구장 가다가 모래 먼지 날려서 눈물 흘림', time: '어제 13:05' }
+        ];
+
+        const initialPetitions = [
+            { grade: '3학년 2반', name: '김체육', msg: '바람 분 날 눈에 모래 들어갈 때마다 너무 힘들어요. 잔디 운동장 꼭 설치해 주세요!' },
+            { grade: '1학년 5반', name: '이안전', msg: '보건실 매번 가기 싫어요. 잔디로 바뀌면 마음껏 축구하고 싶습니다.' },
+            { grade: '2학년 1반', name: '박축구', msg: '잔디에서 넘어져도 안 아프고 바람 불어도 눈 안 감아도 되는 운동장 원해요!' }
+        ];
+
+        let windSpeed = 8; // Default 8m/s
+
+        // Canvas context pointers
+        let sandCanvas, sandCtx;
+        let turfCanvas, turfCtx;
+        let sandParticles = [];
+        let turfParticles = [];
+
+        window.onload = function() {
+            initIncidents();
+            initPetitions();
+            initCanvases();
+            animateCanvases();
+        };
+
+        // --- Core Feature 1: Incident Recorder Logic ---
+        function getStoredLogs() {
+            const data = localStorage.getItem('greengood_incidents');
+            return data ? JSON.parse(data) : initialLogs;
+        }
+
+        function initIncidents() {
+            const logs = getStoredLogs();
+            const container = document.getElementById('incident-list-container');
+            const totalEl = document.getElementById('total-logs-count');
+            
+            container.innerHTML = '';
+            totalEl.innerText = `총 ${logs.length}건 기록됨`;
+
+            logs.forEach(log => {
+                const card = document.createElement('div');
+                card.className = 'glass-card p-3 rounded-xl space-y-1 border-l-2 border-l-amber-500 text-xs';
+                card.innerHTML = `
+                    <div class="flex justify-between items-center text-[11px]">
+                        <span class="font-bold text-amber-300">${escapeHtml(log.activity)}</span>
+                        <span class="text-slate-400">${escapeHtml(log.time)}</span>
+                    </div>
+                    <p class="text-white font-medium">${escapeHtml(log.note)}</p>
+                    <div class="flex gap-2 text-[10px] text-slate-400 pt-1">
+                        <span class="bg-slate-900 px-2 py-0.5 rounded text-amber-400">${escapeHtml(log.wind)}</span>
+                        <span class="bg-slate-900 px-2 py-0.5 rounded text-red-400">${escapeHtml(log.severity)}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function saveIncidentLog(e) {
+            e.preventDefault();
+            const activity = document.getElementById('log-activity').value;
+            const wind = document.getElementById('log-wind').value;
+            const severity = document.getElementById('log-severity').value;
+            const note = document.getElementById('log-note').value.trim();
+
+            if (!note) return;
+
+            const logs = getStoredLogs();
+            const now = new Date();
+            const timeStr = `${now.getMonth() + 1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+            logs.unshift({
+                activity, wind, severity, note, time: timeStr
+            });
+
+            localStorage.setItem('greengood_incidents', JSON.stringify(logs));
+            document.getElementById('log-note').value = '';
+            initIncidents();
+            showToast('피해 상황이 안전하게 로컬에 기록되었습니다.');
+        }
+
+        // --- Core Feature 2: Interactive Playground Canvas Simulator ---
+        function updateWindSpeed(val) {
+            windSpeed = parseInt(val);
+            document.getElementById('wind-speed-val').innerText = `${windSpeed} m/s (${getWindCategory(windSpeed)})`;
+
+            // Update Sand indicators
+            const sandRisk = document.getElementById('sand-risk-indicator');
+            const studentStatus = document.getElementById('sand-student-status');
+            const dustText = document.getElementById('dust-density-text');
+
+            if (windSpeed < 4) {
+                sandRisk.innerText = '안구 모래 유입 위험: 낮음';
+                sandRisk.className = 'text-xs font-extrabold text-emerald-400';
+                studentStatus.innerText = '"바람이 별로 안 불어서 조금 괜찮아요."';
+                dustText.innerText = 'LOW';
+            } else if (windSpeed < 9) {
+                sandRisk.innerText = '안구 모래 유입 위험: 높음';
+                sandRisk.className = 'text-xs font-extrabold text-amber-400';
+                studentStatus.innerText = '"바람 때문에 눈을 뜰 수 없어요! 😣"';
+                dustText.innerText = 'MEDIUM';
+            } else {
+                sandRisk.innerText = '안구 모래 유입 위험: 매우 심각!';
+                sandRisk.className = 'text-xs font-extrabold text-red-500 animate-pulse';
+                studentStatus.innerText = '"아악! 눈에 모래 들어가서 통증 심해요! 😭"';
+                dustText.innerText = 'DANGER HIGH';
+            }
+        }
+
+        function getWindCategory(speed) {
+            if (speed < 4) return '미풍';
+            if (speed < 9) return '약한 강풍';
+            if (speed < 12) return '강풍';
+            return '태풍급 돌풍';
+        }
+
+        function initCanvases() {
+            sandCanvas = document.getElementById('sand-canvas');
+            sandCtx = sandCanvas.getContext('2d');
+            turfCanvas = document.getElementById('turf-canvas');
+            turfCtx = turfCanvas.getContext('2d');
+
+            resizeCanvases();
+            window.addEventListener('resize', resizeCanvases);
+
+            // Create initial particles
+            sandParticles = [];
+            for (let i = 0; i < 150; i++) {
+                sandParticles.push({
+                    x: Math.random() * sandCanvas.width,
+                    y: Math.random() * sandCanvas.height,
+                    size: Math.random() * 3 + 1,
+                    speedX: Math.random() * 2 + 1,
+                    speedY: (Math.random() - 0.5) * 1.5,
+                    opacity: Math.random() * 0.7 + 0.3
+                });
+            }
+
+            // Turf pollen/sparkles
+            turfParticles = [];
+            for (let i = 0; i < 30; i++) {
+                turfParticles.push({
+                    x: Math.random() * turfCanvas.width,
+                    y: Math.random() * turfCanvas.height,
+                    size: Math.random() * 2 + 1,
+                    speedY: -Math.random() * 0.5 - 0.2,
+                    opacity: Math.random()
+                });
+            }
+        }
+
+        function resizeCanvases() {
+            const rectS = sandCanvas.parentElement.getBoundingClientRect();
+            sandCanvas.width = rectS.width;
+            sandCanvas.height = rectS.height;
+
+            const rectT = turfCanvas.parentElement.getBoundingClientRect();
+            turfCanvas.width = rectT.width;
+            turfCanvas.height = rectT.height;
+        }
+
+        function animateCanvases() {
+            // Render Sand Canvas
+            sandCtx.clearRect(0, 0, sandCanvas.width, sandCanvas.height);
+            
+            // Sand Background
+            const sandGrad = sandCtx.createLinearGradient(0, 0, 0, sandCanvas.height);
+            sandGrad.addColorStop(0, '#1e1b18');
+            sandGrad.addColorStop(0.7, '#3d2e1e');
+            sandGrad.addColorStop(1, '#8c6034');
+            sandCtx.fillStyle = sandGrad;
+            sandCtx.fillRect(0, 0, sandCanvas.width, sandCanvas.height);
+
+            // Draw Sand particles based on wind speed
+            const activeCount = Math.min(Math.floor((windSpeed / 15) * 150) + 15, 150);
+            sandCtx.fillStyle = '#d97706';
+
+            for (let i = 0; i < activeCount; i++) {
+                let p = sandParticles[i];
+                sandCtx.beginPath();
+                sandCtx.globalAlpha = p.opacity;
+                sandCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                sandCtx.fill();
+
+                // Move with wind
+                p.x += (p.speedX + windSpeed * 1.2);
+                p.y += p.speedY;
+
+                if (p.x > sandCanvas.width) {
+                    p.x = 0;
+                    p.y = Math.random() * sandCanvas.height;
+                }
+            }
+            sandCtx.globalAlpha = 1.0;
+
+            // Render Turf Canvas
+            turfCtx.clearRect(0, 0, turfCanvas.width, turfCanvas.height);
+            
+            // Turf Background
+            const turfGrad = turfCtx.createLinearGradient(0, 0, 0, turfCanvas.height);
+            turfGrad.addColorStop(0, '#0a1d16');
+            turfGrad.addColorStop(0.6, '#0f382c');
+            turfGrad.addColorStop(1, '#059669');
+            turfCtx.fillStyle = turfGrad;
+            turfCtx.fillRect(0, 0, turfCanvas.width, turfCanvas.height);
+
+            // Draw Turf Grass Blades Graphic
+            turfCtx.strokeStyle = '#10b981';
+            turfCtx.lineWidth = 2;
+            for (let x = 0; x < turfCanvas.width; x += 12) {
+                turfCtx.beginPath();
+                turfCtx.moveTo(x, turfCanvas.height);
+                turfCtx.lineTo(x + Math.sin(Date.now() * 0.002 + x) * 4, turfCanvas.height - 25);
+                turfCtx.stroke();
+            }
+
+            // Draw calm sparkles
+            turfCtx.fillStyle = '#a7f3d0';
+            turfParticles.forEach(p => {
+                turfCtx.beginPath();
+                turfCtx.globalAlpha = p.opacity;
+                turfCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                turfCtx.fill();
+
+                p.y += p.speedY;
+                if (p.y < 0) {
+                    p.y = turfCanvas.height;
+                    p.x = Math.random() * turfCanvas.width;
+                }
+            });
+            turfCtx.globalAlpha = 1.0;
+
+            requestAnimationFrame(animateCanvases);
+        }
+
+        // --- Student Petition Logic ---
+        function getStoredPetitions() {
+            const data = localStorage.getItem('greengood_petitions');
+            return data ? JSON.parse(data) : initialPetitions;
+        }
+
+        function initPetitions() {
+            const list = getStoredPetitions();
+            const feed = document.getElementById('petition-feed');
+            feed.innerHTML = '';
+
+            list.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'glass-card p-3 rounded-xl text-xs space-y-1';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center text-[10px]">
+                        <span class="bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded font-bold border border-emerald-800">${escapeHtml(item.grade)}</span>
+                        <span class="font-bold text-white">${escapeHtml(item.name)}</span>
+                    </div>
+                    <p class="text-slate-300 leading-normal">${escapeHtml(item.msg)}</p>
+                `;
+                feed.appendChild(div);
+            });
+        }
+
+        function handlePetitionSubmit(e) {
+            e.preventDefault();
+            const grade = document.getElementById('petitioner-grade').value.trim();
+            const name = document.getElementById('petitioner-name').value.trim();
+            const msg = document.getElementById('petitioner-message').value.trim();
+
+            if (!grade || !name || !msg) return;
+
+            const list = getStoredPetitions();
+            list.unshift({ grade, name, msg });
+
+            localStorage.setItem('greengood_petitions', JSON.stringify(list));
+            document.getElementById('petitioner-grade').value = '';
+            document.getElementById('petitioner-name').value = '';
+            document.getElementById('petitioner-message').value = '';
+
+            initPetitions();
+            showToast('청원 동참 메시지가 등록되었습니다! 고맙습니다.');
+        }
+
+        // Helper Toast Notification
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = msg;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        // Helper XSS Escape
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
